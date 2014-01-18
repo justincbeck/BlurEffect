@@ -8,7 +8,6 @@
 
 #import "BPViewController.h"
 
-#import "BPActionsViewController.h"
 #import "UIImage+ImageEffects.h"
 
 #define drawerOpenX 795
@@ -18,10 +17,13 @@
 
 @interface BPViewController ()
 {
-    BPActionsViewController *_avc;
+    UIView *_drawerView;
     UInt8 *_maskData;
+    CGImageRef _maskRef;
+    
+    UIImageView *_backgroundImageView;
+    UIImageView *_forgroundImageView;
 }
-@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 
 @end
 
@@ -31,18 +33,44 @@
 {
     [super viewDidLoad];
     
-    _avc = [[self childViewControllers] objectAtIndex:0];
-    CGRect avcFrame = [[_avc view] frame];
-    avcFrame.origin.x = drawerClosedX;
+    UIImage *backgroundImage = [UIImage imageNamed:@"New-York-City-Colors.jpg"];
     
-    [[_avc view] setFrame:avcFrame];
-    [[_avc view] setAlpha:0.5];
+    _backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
+    [_backgroundImageView setFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    [[self view] addSubview:_backgroundImageView];
+    
+    _maskRef = [self createMask];
+    
+    UIGraphicsBeginImageContextWithOptions(_backgroundImageView.bounds.size, YES, [UIScreen mainScreen].scale);
+    [backgroundImage drawInRect:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    UIColor *tintColor = [UIColor colorWithWhite:1.0 alpha:0.3];
+    UIImage *blurredImage = [img applyBlurWithRadius:10 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
+
+    [_backgroundImageView setImage:blurredImage];
+    
+    UIImage *foregroundImage = [UIImage imageNamed:@"New-York-City-Colors.jpg"];
+    CGImageRef maskedImageRef = CGImageCreateWithMask([foregroundImage CGImage], _maskRef);
+    
+    UIImage *maskedImage = [UIImage imageWithCGImage:maskedImageRef];
+    
+    _forgroundImageView = [[UIImageView alloc] initWithImage:maskedImage];
+    [_forgroundImageView setFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    
+    [[self view] addSubview:_forgroundImageView];
+
+    _drawerView = [[UIView alloc] initWithFrame:CGRectMake(drawerClosedX, 0.0, 1024.0, 768.0)];
+    [_drawerView setBackgroundColor:[UIColor whiteColor]];
+    [_drawerView setAlpha:0.2];
+    [[self view] addSubview:_drawerView];
     
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerPan:)];
     [panGesture setMinimumNumberOfTouches:1];
     [panGesture setMaximumNumberOfTouches:1];
     
-    [[_avc view] addGestureRecognizer:panGesture];
+    [_drawerView addGestureRecognizer:panGesture];
 }
 
 - (void)didReceiveMemoryWarning
@@ -56,85 +84,26 @@
     UIView *actionsDrawerView = [panGesture view];
     CGRect drawerFrame = [actionsDrawerView frame];
     
-    UIImageView *blurImageView;
-    
-    CGPoint point = [panGesture translationInView:actionsDrawerView.superview];
-    CGImageRef maskRef = nil;
-    
-    if ([panGesture state] == UIGestureRecognizerStateBegan)
+    if ([panGesture state] == UIGestureRecognizerStateChanged)
     {
-        maskRef = [self createMask];
-        UIImage *maskImage = [[UIImage alloc] initWithCGImage:maskRef];
-
-        UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0);
-        [[self view] drawViewHierarchyInRect:CGRectMake(0.0, 0.0, 1024.0, 768.0) afterScreenUpdates:YES];
-        UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-
-        UIColor *tintColor = [UIColor colorWithWhite:1.0 alpha:0.3];
-        [img applyBlurWithRadius:30 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:maskImage];
-
-        blurImageView = [[UIImageView alloc] initWithImage:img];
-        [blurImageView setFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
-        [[self backgroundImageView] addSubview:blurImageView];
-    }
-    else if ([panGesture state] == UIGestureRecognizerStateChanged)
-    {
+        CGPoint point = [panGesture translationInView:actionsDrawerView.superview];
+        
         if (drawerFrame.origin.x + point.x < drawerClosedX && drawerFrame.origin.x + point.x > drawerOpenX)
         {
-            maskRef = [self updateMaskFrom:drawerFrame.origin.x to:drawerFrame.origin.x + point.x];
+            _maskRef = [self updateMaskFrom:drawerFrame.origin.x to:drawerFrame.origin.x + point.x];
             
-            UIImage *maskImage = [[UIImage alloc] initWithCGImage:maskRef];
+            UIImage *foregroundImage = [UIImage imageNamed:@"New-York-City-Colors.jpg"];
+            CGImageRef maskedImageRef = CGImageCreateWithMask([foregroundImage CGImage], _maskRef);
             
-            UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0);
-            [[self view] drawViewHierarchyInRect:CGRectMake(0.0, 0.0, 1024.0, 768.0) afterScreenUpdates:YES];
-            UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-
-            UIColor *tintColor = [UIColor colorWithWhite:1.0 alpha:0.3];
-            [img applyBlurWithRadius:30 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:maskImage];
-            [blurImageView setImage:img];
-
+            UIImage *maskedImage = [UIImage imageWithCGImage:maskedImageRef];
+            [_forgroundImageView setImage:maskedImage];
+            
             drawerFrame.origin.x += point.x;
         }
         
         [actionsDrawerView setFrame:drawerFrame];
         [panGesture setTranslation:CGPointZero inView:actionsDrawerView.superview];
     }
-    else if([panGesture state] == UIGestureRecognizerStateEnded)
-    {
-        if (drawerFrame.origin.x < drawerMidX)
-        {
-            [self snapDrawer:YES];
-        }
-        else
-        {
-            [self snapDrawer:NO];
-        }
-    }
-}
-
-- (void)snapDrawer:(Boolean)open
-{
-    BPActionsViewController *avc = [[self childViewControllers] objectAtIndex:0];
-    
-    CGRect drawerFrame = [[avc view] frame];
-    float duration = 0.0;
-    
-    if (open)
-    {
-        duration = (ABS(drawerFrame.origin.x - drawerOpenX) / drawerDeltaX)  * 0.3;
-        drawerFrame.origin.x = drawerOpenX;
-    }
-    else
-    {
-        duration = (ABS(drawerFrame.origin.x - drawerClosedX) / drawerDeltaX)  * 0.3;
-        drawerFrame.origin.x = drawerClosedX;
-    }
-    
-    [UIView animateWithDuration:duration animations:^{
-        [[avc view] setFrame:drawerFrame];
-    }];
 }
 
 - (CGImageRef)createMask
@@ -154,7 +123,7 @@
             float blue = 0.0;
             float alpha = 1.0;
             
-            if (i <= 900)
+            if (i >= drawerClosedX)
             {
                 red = 1.0;
                 green = 1.0;
@@ -173,11 +142,17 @@
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, _maskData, length, NULL);
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
     CGImageRef imageRef = CGImageCreate(width, height, 8, 32, width * 4, colorspace, kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast, provider, NULL, true, kCGRenderingIntentDefault);
+    CGImageRef actualMask = CGImageMaskCreate(CGImageGetWidth(imageRef),
+                                              CGImageGetHeight(imageRef),
+                                              CGImageGetBitsPerComponent(imageRef),
+                                              CGImageGetBitsPerPixel(imageRef),
+                                              CGImageGetBytesPerRow(imageRef),
+                                              CGImageGetDataProvider(imageRef), NULL, false);
     
     CGColorSpaceRelease(colorspace);
     CGDataProviderRelease(provider);
     
-    return imageRef;
+    return actualMask;
 }
 
 - (CGImageRef)updateMaskFrom:(float)originalX to:(float)newX
@@ -185,6 +160,7 @@
     int start = 0;
     int stop = 0;
     int length = 1024 * 768 * 4;
+    BOOL opening = YES;
     
     if (originalX > newX)
     {
@@ -195,6 +171,7 @@
     {
         start = originalX;
         stop = newX;
+        opening = NO;
     }
     
     for (int j = 0; j < 768; j++)
@@ -203,20 +180,29 @@
         {
             int index = 4 * (i + j * 1024);
             
-            _maskData[index] = 255 * 1.0;
-            _maskData[++index] = 255 * 1.0;
-            _maskData[++index] = 255 * 1.0;
+            NSNumber *openingNum = [NSNumber numberWithBool:opening];
+            float val = [openingNum floatValue];
+            
+            _maskData[index] = 255 * val;
+            _maskData[++index] = 255 * val;
+            _maskData[++index] = 255 * val;
         }
     }
     
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, _maskData, length, NULL);
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
     CGImageRef imageRef = CGImageCreate(1024, 768, 8, 32, 1024 * 4, colorspace, kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast, provider, NULL, true, kCGRenderingIntentDefault);
+    CGImageRef actualMask = CGImageMaskCreate(CGImageGetWidth(imageRef),
+                                              CGImageGetHeight(imageRef),
+                                              CGImageGetBitsPerComponent(imageRef),
+                                              CGImageGetBitsPerPixel(imageRef),
+                                              CGImageGetBytesPerRow(imageRef),
+                                              CGImageGetDataProvider(imageRef), NULL, false);
     
     CGColorSpaceRelease(colorspace);
     CGDataProviderRelease(provider);
     
-    return imageRef;
+    return actualMask;
 }
 
 @end
