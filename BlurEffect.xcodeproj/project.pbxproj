@@ -22,7 +22,6 @@
 		9866FC511889A7B600E6CD34 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9866FC4F1889A7B600E6CD34 /* InfoPlist.strings */; };
 		9866FC531889A7B600E6CD34 /* BlurEffectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9866FC521889A7B600E6CD34 /* BlurEffectTests.m */; };
 		9866FC64188A1BFF00E6CD34 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9866FC63188A1BFF00E6CD34 /* UIImage+ImageEffects.m */; };
-		9866FC66188A242500E6CD34 /* New-York-City-Colors.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9866FC65188A242500E6CD34 /* New-York-City-Colors.jpg */; };
 		9866FC6B188A38DF00E6CD34 /* Train_of_Many_Colors.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9866FC6A188A38DF00E6CD34 /* Train_of_Many_Colors.jpg */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +57,6 @@
 		9866FC521889A7B600E6CD34 /* BlurEffectTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlurEffectTests.m; sourceTree = "<group>"; };
 		9866FC62188A1BFF00E6CD34 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		9866FC63188A1BFF00E6CD34 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
-		9866FC65188A242500E6CD34 /* New-York-City-Colors.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "New-York-City-Colors.jpg"; path = "Images.xcassets/New-York-City-Colors.jpg"; sourceTree = "<group>"; };
 		9866FC6A188A38DF00E6CD34 /* Train_of_Many_Colors.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Train_of_Many_Colors.jpg; path = Images.xcassets/Train_of_Many_Colors.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -126,7 +124,6 @@
 				9866FC3C1889A7B600E6CD34 /* BPViewController.h */,
 				9866FC3D1889A7B600E6CD34 /* BPViewController.m */,
 				9866FC3F1889A7B600E6CD34 /* Images.xcassets */,
-				9866FC65188A242500E6CD34 /* New-York-City-Colors.jpg */,
 				9866FC2E1889A7B600E6CD34 /* Supporting Files */,
 				9866FC62188A1BFF00E6CD34 /* UIImage+ImageEffects.h */,
 				9866FC63188A1BFF00E6CD34 /* UIImage+ImageEffects.m */,
@@ -240,7 +237,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9866FC66188A242500E6CD34 /* New-York-City-Colors.jpg in Resources */,
 				9866FC401889A7B600E6CD34 /* Images.xcassets in Resources */,
 				9866FC321889A7B600E6CD34 /* InfoPlist.strings in Resources */,
 				9866FC6B188A38DF00E6CD34 /* Train_of_Many_Colors.jpg in Resources */,
@@ -477,6 +473,7 @@
 				9866FC581889A7B600E6CD34 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9866FC591889A7B600E6CD34 /* Build configuration list for PBXNativeTarget "BlurEffectTests" */ = {
 			isa = XCConfigurationList;
@@ -485,6 +482,7 @@
 				9866FC5B1889A7B600E6CD34 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
