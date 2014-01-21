@@ -11,9 +11,10 @@
 #import "UIImage+ImageEffects.h"
 
 #define width 1024
+#define maskWidth 1198
 #define height 768
-#define length width * height * 4
-#define drawerOpenX 795
+#define length 3680256
+#define drawerOpenX 850
 #define drawerClosedX 970
 #define drawerDeltaX (drawerClosedX - drawerOpenX) / 2
 #define drawerMidX (drawerClosedX + drawerOpenX) / 2
@@ -51,11 +52,11 @@
     UIImage *backgroundImage = [UIImage imageNamed:@"Train_of_Many_Colors.jpg"];
     
     _backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
-    [_backgroundImageView setFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    [_backgroundImageView setFrame:CGRectMake(0.0, 0.0, width, height)];
     [[self view] addSubview:_backgroundImageView];
     
     UIGraphicsBeginImageContextWithOptions(_backgroundImageView.bounds.size, YES, [UIScreen mainScreen].scale);
-    [backgroundImage drawInRect:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    [backgroundImage drawInRect:CGRectMake(0.0, 0.0, width, height)];
     UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 
@@ -64,22 +65,22 @@
 
     [_backgroundImageView setImage:blurredImage];
     
-    UIImage *foregroundImage = [UIImage imageNamed:@"Train_of_Many_Colors.jpg"];
+    UIImage *mask = [UIImage imageWithCGImage:_maskRef];
     
     CALayer *maskLayer = [CALayer layer];
-    maskLayer.frame = CGRectMake(0.0, 0.0, width, height);
-    UIImage *mask = [UIImage imageWithCGImage:_maskRef];
-    maskLayer.contents = (id) mask.CGImage;
+    [maskLayer setFrame:CGRectMake(0.0, 0.0, maskWidth, height)];
+    [maskLayer setContents:(id) mask.CGImage];
     
-    _forgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
-    [_forgroundImageView setImage:foregroundImage];
+    _forgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+    [_forgroundImageView setImage:[UIImage imageNamed:@"Train_of_Many_Colors.jpg"]];
     _forgroundImageView.layer.mask = maskLayer;
     
     [[self view] addSubview:_forgroundImageView];
 
-    _drawerView = [[UIView alloc] initWithFrame:CGRectMake(drawerClosedX, 0.0, 1024.0, 768.0)];
-    [_drawerView setBackgroundColor:[UIColor whiteColor]];
-    [_drawerView setAlpha:0.2];
+    _drawerView = [[UIView alloc] initWithFrame:CGRectMake(drawerClosedX, 0.0, 230.0, height)];
+    [_drawerView setBackgroundColor:[UIColor darkGrayColor]];
+    [_drawerView setAlpha:0.5];
+    [self addButtons];
     [[self view] addSubview:_drawerView];
     
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerPan:)];
@@ -89,72 +90,162 @@
     [_drawerView addGestureRecognizer:panGesture];
 }
 
+- (void)addButtons
+{
+    UIButton *redButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [redButton setFrame:CGRectMake(7.0, 230.0, 40.0, 40.0)];
+    [redButton addTarget:self action:@selector(redButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [[redButton layer] setCornerRadius:20.0];
+    [[redButton layer] setBorderWidth:1.0];
+    [[redButton layer] setBorderColor:[UIColor redColor].CGColor];
+    
+    UILabel *redLabel = [[UILabel alloc] initWithFrame:CGRectMake(57.0, 238.0, 150.0, 25.0)];
+    [redLabel setText:@"It's RED"];
+    [redLabel setTextColor:[UIColor redColor]];
+    
+    [_drawerView addSubview:redButton];
+    [_drawerView addSubview:redLabel];
+    
+    UIButton *orangeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [orangeButton setFrame:CGRectMake(7.0, 300.0, 40.0, 40.0)];
+    [orangeButton addTarget:self action:@selector(orangeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [[orangeButton layer] setCornerRadius:20.0];
+    [[orangeButton layer] setBorderWidth:1.0];
+    [[orangeButton layer] setBorderColor:[UIColor orangeColor].CGColor];
+    
+    UILabel *orangeLabel = [[UILabel alloc] initWithFrame:CGRectMake(57.0, 308.0, 150.0, 25.0)];
+    [orangeLabel setText:@"It's ORANGE"];
+    [orangeLabel setTextColor:[UIColor orangeColor]];
+    
+    [_drawerView addSubview:orangeButton];
+    [_drawerView addSubview:orangeLabel];
+    
+    UIButton *yellowButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [yellowButton setFrame:CGRectMake(7.0, 370.0, 40.0, 40.0)];
+    [yellowButton addTarget:self action:@selector(yellowButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [[yellowButton layer] setCornerRadius:20.0];
+    [[yellowButton layer] setBorderWidth:1.0];
+    [[yellowButton layer] setBorderColor:[UIColor yellowColor].CGColor];
+    
+    UILabel *yellowLabel = [[UILabel alloc] initWithFrame:CGRectMake(57.0, 378.0, 150.0, 25.0)];
+    [yellowLabel setText:@"It's YELLOW"];
+    [yellowLabel setTextColor:[UIColor yellowColor]];
+    
+    [_drawerView addSubview:yellowButton];
+    [_drawerView addSubview:yellowLabel];
+    
+    UIButton *greenButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [greenButton setFrame:CGRectMake(7.0, 440.0, 40.0, 40.0)];
+    [greenButton addTarget:self action:@selector(greenButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [[greenButton layer] setCornerRadius:20.0];
+    [[greenButton layer] setBorderWidth:1.0];
+    [[greenButton layer] setBorderColor:[UIColor greenColor].CGColor];
+    
+    UILabel *greenLabel = [[UILabel alloc] initWithFrame:CGRectMake(57.0, 448.0, 150.0, 25.0)];
+    [greenLabel setText:@"It's GREEN"];
+    [greenLabel setTextColor:[UIColor greenColor]];
+    
+    [_drawerView addSubview:greenButton];
+    [_drawerView addSubview:greenLabel];
+}
+
+- (void)redButtonTapped:(id)sender
+{
+    [self flashColor:[UIColor redColor]];
+}
+
+- (void)orangeButtonTapped:(id)sender
+{
+    [self flashColor:[UIColor orangeColor]];
+}
+
+- (void)yellowButtonTapped:(id)sender
+{
+    [self flashColor:[UIColor yellowColor]];
+}
+
+- (void)greenButtonTapped:(id)sender
+{
+    [self flashColor:[UIColor greenColor]];
+}
+
+- (void)flashColor:(UIColor *)color
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+    [view setBackgroundColor:color];
+    [view setAlpha:0.3];
+    
+    [[self view] addSubview:view];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        [view setAlpha:0.0];
+    } completion:^(BOOL finished) {
+        [view removeFromSuperview];
+    }];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)actionDrawerPan:(UIPanGestureRecognizer *)panGesture
 {
     UIView *actionsDrawerView = [panGesture view];
     CGRect drawerFrame = [actionsDrawerView frame];
-    
+    CGRect maskFrame = _forgroundImageView.layer.bounds;
+
     if ([panGesture state] == UIGestureRecognizerStateChanged)
     {
         CGPoint point = [panGesture translationInView:actionsDrawerView.superview];
         
         if (drawerFrame.origin.x + point.x < drawerClosedX && drawerFrame.origin.x + point.x > drawerOpenX)
         {
-            _maskRef = [self updateMaskFrom:drawerFrame.origin.x to:drawerFrame.origin.x + point.x];
-            
-            CALayer *maskLayer = [CALayer layer];
-            maskLayer.frame = CGRectMake(0.0, 0.0, width, height);
-            UIImage *mask = [UIImage imageWithCGImage:_maskRef];
-            maskLayer.contents = (id) mask.CGImage;
-            
-            _forgroundImageView.layer.mask = maskLayer;
-            
-            CGImageRelease(_maskRef);
-
+            maskFrame.origin.x -= point.x;
             drawerFrame.origin.x += point.x;
         }
         
+        _forgroundImageView.layer.bounds = maskFrame;
         [actionsDrawerView setFrame:drawerFrame];
         [panGesture setTranslation:CGPointZero inView:actionsDrawerView.superview];
     }
     else if ([panGesture state] == UIGestureRecognizerStateEnded)
     {
-//        CGImageRelease(_maskData);
+        [self snapDrawer:drawerFrame.origin.x < drawerMidX];
     }
 }
 
-//- (void)actionDrawerSnap
-//{
-//    CGRect drawerFrame = [[_actionsDrawerViewController view] frame];
-//    float duration = 0.0;
-//    
-//    if (open)
-//    {
-//        duration = (ABS(drawerFrame.origin.x - drawerOpenX) / drawerDeltaX)  * 0.3;
-//        drawerFrame.origin.x = drawerOpenX;
-//    }
-//    else
-//    {
-//        duration = (ABS(drawerFrame.origin.x - drawerClosedX) / drawerDeltaX)  * 0.3;
-//        drawerFrame.origin.x = drawerClosedX;
-//    }
-//    
-//    [UIView animateWithDuration:duration animations:^{
-//        [[_actionsDrawerViewController view] setFrame:drawerFrame];
-//    }];
-//}
+- (void)snapDrawer:(BOOL)open
+{
+    CGRect drawerFrame = [_drawerView frame];
+    CGRect layerFrame = _forgroundImageView.layer.bounds;
+
+    float duration = 0.0;
+    
+    if (open)
+    {
+        duration = (ABS(drawerFrame.origin.x - drawerOpenX) / drawerDeltaX)  * 0.3;
+        drawerFrame.origin.x = drawerOpenX;
+        layerFrame.origin.x = 120.0;
+    }
+    else
+    {
+        duration = (ABS(drawerFrame.origin.x - drawerClosedX) / drawerDeltaX)  * 0.3;
+        drawerFrame.origin.x = drawerClosedX;
+        layerFrame.origin.x = 0;
+    }
+    
+    [UIView animateWithDuration:duration animations:^{
+        [_drawerView setFrame:drawerFrame];
+        _forgroundImageView.layer.bounds = layerFrame;
+    }];
+}
 
 - (CGImageRef)createMask
 {
     for (int j = 0; j < height; j++)
     {
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < maskWidth; i++)
         {
             float red = 0.0;
             float green = 0.0;
@@ -168,7 +259,7 @@
                 blue = 1.0;
             }
             
-            int index = 4 * (i + j * width);
+            int index = 4 * (i + j * maskWidth);
             
             _maskData[index] = 255 * red;
             _maskData[++index] = 255 * green;
@@ -178,51 +269,10 @@
     }
     
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, _maskData, length, NULL);
-    CGImageRef actualMask = CGImageMaskCreate(width, height, 8, 32, width * 4, provider, NULL, false);
+    CGImageRef actualMask = CGImageMaskCreate(maskWidth, height, 8, 32, maskWidth * 4, provider, NULL, false);
     
     CGDataProviderRelease(provider);
     
-    return actualMask;
-}
-
-- (CGImageRef)updateMaskFrom:(float)originalX to:(float)newX
-{
-    int start = 0;
-    int stop = 0;
-    BOOL opening = YES;
-    
-    if (originalX > newX)
-    {
-        start = newX;
-        stop = originalX;
-    }
-    else
-    {
-        start = originalX;
-        stop = newX;
-        opening = NO;
-    }
-    
-    for (int j = 0; j < height; j++)
-    {
-        for (int i = start; i < stop; i++)
-        {
-            int index = 4 * (i + j * width);
-            
-            NSNumber *openingNum = [NSNumber numberWithBool:opening];
-            float val = [openingNum floatValue];
-            
-            _maskData[index] = 255 * val;
-            _maskData[++index] = 255 * val;
-            _maskData[++index] = 255 * val;
-        }
-    }
-    
-    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, _maskData, length, NULL);
-    CGImageRef actualMask = CGImageMaskCreate(width, height, 8, 32, width * 4, provider, NULL, false);
-
-    CGDataProviderRelease(provider);
-
     return actualMask;
 }
 
