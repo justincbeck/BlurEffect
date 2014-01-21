@@ -65,13 +65,15 @@
     [_backgroundImageView setImage:blurredImage];
     
     UIImage *foregroundImage = [UIImage imageNamed:@"Train_of_Many_Colors.jpg"];
-    CGImageRef maskedImageRef = CGImageCreateWithMask([foregroundImage CGImage], _maskRef);
     
-    UIImage *maskedImage = [UIImage imageWithCGImage:maskedImageRef];
-    CGImageRelease(maskedImageRef);
+    CALayer *maskLayer = [CALayer layer];
+    maskLayer.frame = CGRectMake(0.0, 0.0, width, height);
+    UIImage *mask = [UIImage imageWithCGImage:_maskRef];
+    maskLayer.contents = (id) mask.CGImage;
     
-    _forgroundImageView = [[UIImageView alloc] initWithImage:maskedImage];
-    [_forgroundImageView setFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    _forgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    [_forgroundImageView setImage:foregroundImage];
+    _forgroundImageView.layer.mask = maskLayer;
     
     [[self view] addSubview:_forgroundImageView];
 
@@ -104,15 +106,16 @@
         
         if (drawerFrame.origin.x + point.x < drawerClosedX && drawerFrame.origin.x + point.x > drawerOpenX)
         {
-            UIImage *foregroundImage = [UIImage imageNamed:@"Train_of_Many_Colors.jpg"];
-            
             _maskRef = [self updateMaskFrom:drawerFrame.origin.x to:drawerFrame.origin.x + point.x];
-            _maskedImageRef = CGImageCreateWithMask([foregroundImage CGImage], _maskRef);
-            free(_maskRef);
             
-            UIImage *maskedImage = [UIImage imageWithCGImage:_maskedImageRef];
-            [_forgroundImageView setImage:maskedImage];
-            CGImageRelease(_maskedImageRef);
+            CALayer *maskLayer = [CALayer layer];
+            maskLayer.frame = CGRectMake(0.0, 0.0, width, height);
+            UIImage *mask = [UIImage imageWithCGImage:_maskRef];
+            maskLayer.contents = (id) mask.CGImage;
+            
+            _forgroundImageView.layer.mask = maskLayer;
+            
+            CGImageRelease(_maskRef);
 
             drawerFrame.origin.x += point.x;
         }
@@ -122,7 +125,7 @@
     }
     else if ([panGesture state] == UIGestureRecognizerStateEnded)
     {
-//        free(_maskData);
+//        CGImageRelease(_maskData);
     }
 }
 
