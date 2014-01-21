@@ -28,6 +28,7 @@
     
     UIImageView *_backgroundImageView;
     UIImageView *_forgroundImageView;
+    UIView *_overlayView;
 }
 
 @end
@@ -78,8 +79,7 @@
     [[self view] addSubview:_forgroundImageView];
 
     _drawerView = [[UIView alloc] initWithFrame:CGRectMake(drawerClosedX, 0.0, 230.0, height)];
-    [_drawerView setBackgroundColor:[UIColor darkGrayColor]];
-    [_drawerView setAlpha:0.5];
+    [_drawerView setBackgroundColor:[UIColor clearColor]];
     [self addButtons];
     [[self view] addSubview:_drawerView];
     
@@ -88,6 +88,9 @@
     [panGesture setMaximumNumberOfTouches:1];
     
     [_drawerView addGestureRecognizer:panGesture];
+    
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerSnap:)];
+    [_drawerView addGestureRecognizer:tapGesture];
 }
 
 - (void)addButtons
@@ -194,8 +197,24 @@
     UIView *actionsDrawerView = [panGesture view];
     CGRect drawerFrame = [actionsDrawerView frame];
     CGRect maskFrame = _forgroundImageView.layer.bounds;
+    
+    float numerator = drawerFrame.origin.x - drawerOpenX;
+    float denominator = drawerClosedX - drawerOpenX;
+    float multiplier = 1 - (numerator / denominator);
+    float alpha = 0.3 * multiplier;
 
-    if ([panGesture state] == UIGestureRecognizerStateChanged)
+    if ([panGesture state] == UIGestureRecognizerStateBegan)
+    {
+        if (drawerFrame.origin.x == drawerClosedX)
+        {
+            _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+            [_overlayView setBackgroundColor:[UIColor blackColor]];
+            [_overlayView setAlpha:alpha];
+            
+            [_forgroundImageView addSubview:_overlayView];
+        }
+    }
+    else if ([panGesture state] == UIGestureRecognizerStateChanged)
     {
         CGPoint point = [panGesture translationInView:actionsDrawerView.superview];
         
@@ -203,11 +222,17 @@
         {
             maskFrame.origin.x -= point.x;
             drawerFrame.origin.x += point.x;
+            
+            float numerator = drawerFrame.origin.x - drawerOpenX;
+            float denominator = drawerClosedX - drawerOpenX;
+            float multiplier = 1 - (numerator / denominator);
+            alpha = 0.3 * multiplier;
         }
         
         _forgroundImageView.layer.bounds = maskFrame;
         [actionsDrawerView setFrame:drawerFrame];
         [panGesture setTranslation:CGPointZero inView:actionsDrawerView.superview];
+        [_overlayView setAlpha:alpha];
     }
     else if ([panGesture state] == UIGestureRecognizerStateEnded)
     {
@@ -215,11 +240,29 @@
     }
 }
 
+- (void)actionDrawerSnap:(UITapGestureRecognizer *)tapGesture
+{
+    CGRect drawerFrame = [_drawerView frame];
+    if (drawerFrame.origin.x == drawerOpenX)
+    {
+        [self snapDrawer:NO];
+    }
+    else
+    {
+        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+        [_overlayView setBackgroundColor:[UIColor blackColor]];
+        [_overlayView setAlpha:0.0];
+        
+        [_forgroundImageView addSubview:_overlayView];
+        [self snapDrawer:YES];
+    }
+}
+
 - (void)snapDrawer:(BOOL)open
 {
     CGRect drawerFrame = [_drawerView frame];
     CGRect layerFrame = _forgroundImageView.layer.bounds;
-
+    float alpha = 0.0;
     float duration = 0.0;
     
     if (open)
@@ -227,6 +270,7 @@
         duration = (ABS(drawerFrame.origin.x - drawerOpenX) / drawerDeltaX)  * 0.3;
         drawerFrame.origin.x = drawerOpenX;
         layerFrame.origin.x = 120.0;
+        alpha = 0.3;
     }
     else
     {
@@ -238,6 +282,13 @@
     [UIView animateWithDuration:duration animations:^{
         [_drawerView setFrame:drawerFrame];
         _forgroundImageView.layer.bounds = layerFrame;
+        [_overlayView setAlpha:alpha];
+    } completion:^(BOOL finished) {
+        if (!open)
+        {
+            [_overlayView removeFromSuperview];
+            _overlayView = nil;
+        }
     }];
 }
 
