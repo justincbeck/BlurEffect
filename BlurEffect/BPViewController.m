@@ -28,6 +28,7 @@
     
     UIImageView *_backgroundImageView;
     UIImageView *_forgroundImageView;
+    UIView *_controlView;
     UIView *_overlayView;
 }
 
@@ -77,7 +78,22 @@
     _forgroundImageView.layer.mask = maskLayer;
     
     [[self view] addSubview:_forgroundImageView];
-
+    
+    _controlView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+    [_controlView setBackgroundColor:[UIColor clearColor]];
+    [[self view] addSubview:_controlView];
+    
+    UIButton *forgroundButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [forgroundButton setFrame:CGRectMake(452.0, 120.0, 120.0, 40.0)];
+    [forgroundButton addTarget:self action:@selector(pushTheButton:) forControlEvents:UIControlEventTouchUpInside];
+    [forgroundButton setTitle:@"Tap me!" forState:UIControlStateNormal];
+    [forgroundButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [[forgroundButton layer] setBorderWidth:1.0];
+    [[forgroundButton layer] setBorderColor:[UIColor darkGrayColor].CGColor];
+    [[forgroundButton layer] setCornerRadius:3.0];
+    
+    [_controlView addSubview:forgroundButton];
+    
     _drawerView = [[UIView alloc] initWithFrame:CGRectMake(drawerClosedX, 0.0, 230.0, height)];
     [_drawerView setBackgroundColor:[UIColor clearColor]];
     [self addButtons];
@@ -172,6 +188,11 @@
     [self flashColor:[UIColor greenColor]];
 }
 
+- (void)pushTheButton:(id)sender
+{
+    [self flashColor:[UIColor whiteColor]];
+}
+
 - (void)flashColor:(UIColor *)color
 {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
@@ -210,8 +231,9 @@
             _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
             [_overlayView setBackgroundColor:[UIColor blackColor]];
             [_overlayView setAlpha:alpha];
+            [_overlayView setUserInteractionEnabled:YES];
             
-            [_forgroundImageView addSubview:_overlayView];
+            [_controlView addSubview:_overlayView];
         }
     }
     else if ([panGesture state] == UIGestureRecognizerStateChanged)
@@ -252,8 +274,9 @@
         _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
         [_overlayView setBackgroundColor:[UIColor blackColor]];
         [_overlayView setAlpha:0.0];
+        [_overlayView setUserInteractionEnabled:YES];
+        [_controlView addSubview:_overlayView];
         
-        [_forgroundImageView addSubview:_overlayView];
         [self snapDrawer:YES];
     }
 }
