@@ -275,6 +275,10 @@
         [_overlayView setBackgroundColor:[UIColor blackColor]];
         [_overlayView setAlpha:0.0];
         [_overlayView setUserInteractionEnabled:YES];
+        
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerSnap:)];
+        [_overlayView addGestureRecognizer:tapGesture];
+        
         [_controlView addSubview:_overlayView];
         
         [self snapDrawer:YES];
@@ -311,6 +315,11 @@
         {
             [_overlayView removeFromSuperview];
             _overlayView = nil;
+        }
+        else
+        {
+            UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerSnap:)];
+            [_overlayView addGestureRecognizer:tapGesture];
         }
     }];
 }
