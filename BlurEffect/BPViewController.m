@@ -222,7 +222,7 @@
     float numerator = drawerFrame.origin.x - drawerOpenX;
     float denominator = drawerClosedX - drawerOpenX;
     float multiplier = 1 - (numerator / denominator);
-    float alpha = 0.3 * multiplier;
+    float alpha = 0.4 * multiplier;
 
     if ([panGesture state] == UIGestureRecognizerStateBegan)
     {
@@ -248,7 +248,7 @@
             float numerator = drawerFrame.origin.x - drawerOpenX;
             float denominator = drawerClosedX - drawerOpenX;
             float multiplier = 1 - (numerator / denominator);
-            alpha = 0.3 * multiplier;
+            alpha = 0.4 * multiplier;
         }
         
         _forgroundImageView.layer.bounds = maskFrame;
@@ -293,7 +293,7 @@
         duration = (ABS(drawerFrame.origin.x - drawerOpenX) / drawerDeltaX)  * 0.3;
         drawerFrame.origin.x = drawerOpenX;
         layerFrame.origin.x = 120.0;
-        alpha = 0.3;
+        alpha = 0.4;
     }
     else
     {
