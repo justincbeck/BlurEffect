@@ -13,7 +13,6 @@
 #define width 1024
 #define maskWidth 1198
 #define height 768
-#define length 3680256
 #define drawerOpenX 850
 #define drawerClosedX 970
 #define drawerDeltaX (drawerClosedX - drawerOpenX) / 2
@@ -21,6 +20,9 @@
 
 @interface BPViewController ()
 {
+    UIScrollView *_scrollView;
+    NSNumber *_length;
+    
     UIView *_drawerView;
     UInt8 *_maskData;
     CGImageRef _maskRef;
@@ -40,7 +42,8 @@
 {
     if (self = [super initWithCoder:aDecoder])
     {
-        _maskData = malloc(sizeof(UInt8) * length);
+        _length = [NSNumber numberWithInt:1198 * 1638 * 4];
+        _maskData = malloc(sizeof(UInt8) * _length.intValue);
         _maskRef = [self createMask];
     }
     
@@ -51,14 +54,19 @@
 {
     [super viewDidLoad];
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"Train_of_Many_Colors.jpg"];
+    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1024.0, 768.0)];
+    [_scrollView setContentSize:CGSizeMake(1024.0, 1638.0)];
+    [_scrollView setBounces:NO];
+    [[self view] addSubview:_scrollView];
+    
+    UIImage *backgroundImage = [UIImage imageNamed:@"Wallpaper-of-Chess-World"];
     
     _backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
-    [_backgroundImageView setFrame:CGRectMake(0.0, 0.0, width, height)];
-    [[self view] addSubview:_backgroundImageView];
+    [_backgroundImageView setFrame:CGRectMake(0.0, 0.0, width, 1638.0)];
+    [_scrollView addSubview:_backgroundImageView];
     
     UIGraphicsBeginImageContextWithOptions(_backgroundImageView.bounds.size, YES, [UIScreen mainScreen].scale);
-    [backgroundImage drawInRect:CGRectMake(0.0, 0.0, width, height)];
+    [backgroundImage drawInRect:CGRectMake(0.0, 0.0, width, 1638.0)];
     UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 
@@ -70,26 +78,26 @@
     UIImage *mask = [UIImage imageWithCGImage:_maskRef];
     
     CALayer *maskLayer = [CALayer layer];
-    [maskLayer setFrame:CGRectMake(0.0, 0.0, maskWidth, height)];
+    [maskLayer setFrame:CGRectMake(0.0, 0.0, maskWidth, 1638)];
     [maskLayer setContents:(id) mask.CGImage];
     
-    _forgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
-    [_forgroundImageView setImage:[UIImage imageNamed:@"Train_of_Many_Colors.jpg"]];
+    _forgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 1638.0)];
+    [_forgroundImageView setImage:[UIImage imageNamed:@"Wallpaper-of-Chess-World"]];
     _forgroundImageView.layer.mask = maskLayer;
     
-    [[self view] addSubview:_forgroundImageView];
+    [_scrollView addSubview:_forgroundImageView];
     
-    _controlView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+    _controlView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 1638.0)];
     [_controlView setBackgroundColor:[UIColor clearColor]];
-    [[self view] addSubview:_controlView];
+    [_scrollView addSubview:_controlView];
     
     UIButton *forgroundButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [forgroundButton setFrame:CGRectMake(452.0, 120.0, 120.0, 40.0)];
     [forgroundButton addTarget:self action:@selector(pushTheButton:) forControlEvents:UIControlEventTouchUpInside];
     [forgroundButton setTitle:@"Tap me!" forState:UIControlStateNormal];
-    [forgroundButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [forgroundButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [[forgroundButton layer] setBorderWidth:1.0];
-    [[forgroundButton layer] setBorderColor:[UIColor darkGrayColor].CGColor];
+    [[forgroundButton layer] setBorderColor:[UIColor whiteColor].CGColor];
     [[forgroundButton layer] setCornerRadius:3.0];
     
     [_controlView addSubview:forgroundButton];
@@ -228,7 +236,7 @@
     {
         if (drawerFrame.origin.x == drawerClosedX)
         {
-            _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+            _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 1638)];
             [_overlayView setBackgroundColor:[UIColor blackColor]];
             [_overlayView setAlpha:alpha];
             [_overlayView setUserInteractionEnabled:YES];
@@ -271,7 +279,7 @@
     }
     else
     {
-        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, height)];
+        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 1638)];
         [_overlayView setBackgroundColor:[UIColor blackColor]];
         [_overlayView setAlpha:0.0];
         [_overlayView setUserInteractionEnabled:YES];
@@ -279,7 +287,7 @@
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerSnap:)];
         [_overlayView addGestureRecognizer:tapGesture];
         
-        [_controlView addSubview:_overlayView];
+        [[self view] addSubview:_overlayView];
         
         [self snapDrawer:YES];
     }
@@ -326,7 +334,7 @@
 
 - (CGImageRef)createMask
 {
-    for (int j = 0; j < height; j++)
+    for (int j = 0; j < 1638; j++)
     {
         for (int i = 0; i < maskWidth; i++)
         {
@@ -351,8 +359,8 @@
         }
     }
     
-    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, _maskData, length, NULL);
-    CGImageRef actualMask = CGImageMaskCreate(maskWidth, height, 8, 32, maskWidth * 4, provider, NULL, false);
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, _maskData, _length.intValue, NULL);
+    CGImageRef actualMask = CGImageMaskCreate(maskWidth, 1638, 8, 32, maskWidth * 4, provider, NULL, false);
     
     CGDataProviderRelease(provider);
     
