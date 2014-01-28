@@ -61,8 +61,7 @@
     
     UIImage *backgroundImage = [UIImage imageNamed:@"Wallpaper-of-Chess-World"];
     
-    _backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
-    [_backgroundImageView setFrame:CGRectMake(0.0, 0.0, width, 1638.0)];
+    _backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 1638.0)];
     [_scrollView addSubview:_backgroundImageView];
     
     UIGraphicsBeginImageContextWithOptions(_backgroundImageView.bounds.size, YES, [UIScreen mainScreen].scale);
@@ -241,7 +240,7 @@
             [_overlayView setAlpha:alpha];
             [_overlayView setUserInteractionEnabled:YES];
             
-            [_controlView addSubview:_overlayView];
+            [[self view] insertSubview:_overlayView belowSubview:_drawerView];
         }
     }
     else if ([panGesture state] == UIGestureRecognizerStateChanged)
@@ -287,7 +286,7 @@
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionDrawerSnap:)];
         [_overlayView addGestureRecognizer:tapGesture];
         
-        [[self view] addSubview:_overlayView];
+        [[self view] insertSubview:_overlayView belowSubview:_drawerView];
         
         [self snapDrawer:YES];
     }
