@@ -23,7 +23,6 @@
 		9866FC511889A7B600E6CD34 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9866FC4F1889A7B600E6CD34 /* InfoPlist.strings */; };
 		9866FC531889A7B600E6CD34 /* BlurEffectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9866FC521889A7B600E6CD34 /* BlurEffectTests.m */; };
 		9866FC64188A1BFF00E6CD34 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9866FC63188A1BFF00E6CD34 /* UIImage+ImageEffects.m */; };
-		9866FC6B188A38DF00E6CD34 /* Train_of_Many_Colors.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9866FC6A188A38DF00E6CD34 /* Train_of_Many_Colors.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,7 +58,6 @@
 		9866FC521889A7B600E6CD34 /* BlurEffectTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlurEffectTests.m; sourceTree = "<group>"; };
 		9866FC62188A1BFF00E6CD34 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		9866FC63188A1BFF00E6CD34 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
-		9866FC6A188A38DF00E6CD34 /* Train_of_Many_Colors.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Train_of_Many_Colors.jpg; path = Images.xcassets/Train_of_Many_Colors.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +118,6 @@
 			isa = PBXGroup;
 			children = (
 				9840CD2618971649001F92D8 /* Wallpaper-of-Chess-World.png */,
-				9866FC6A188A38DF00E6CD34 /* Train_of_Many_Colors.jpg */,
 				9866FC361889A7B600E6CD34 /* BPAppDelegate.h */,
 				9866FC371889A7B600E6CD34 /* BPAppDelegate.m */,
 				9866FC391889A7B600E6CD34 /* Main.storyboard */,
@@ -242,7 +239,6 @@
 			files = (
 				9866FC401889A7B600E6CD34 /* Images.xcassets in Resources */,
 				9866FC321889A7B600E6CD34 /* InfoPlist.strings in Resources */,
-				9866FC6B188A38DF00E6CD34 /* Train_of_Many_Colors.jpg in Resources */,
 				9840CD2718971649001F92D8 /* Wallpaper-of-Chess-World.png in Resources */,
 				9866FC3B1889A7B600E6CD34 /* Main.storyboard in Resources */,
 			);
