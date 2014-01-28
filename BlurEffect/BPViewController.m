@@ -59,10 +59,10 @@
     [_scrollView setBounces:NO];
     [[self view] addSubview:_scrollView];
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"Wallpaper-of-Chess-World"];
-    
     _backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, width, 1638.0)];
     [_scrollView addSubview:_backgroundImageView];
+    
+    UIImage *backgroundImage = [UIImage imageNamed:@"Wallpaper-of-Chess-World"];
     
     UIGraphicsBeginImageContextWithOptions(_backgroundImageView.bounds.size, YES, [UIScreen mainScreen].scale);
     [backgroundImage drawInRect:CGRectMake(0.0, 0.0, width, 1638.0)];
